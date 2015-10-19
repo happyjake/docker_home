@@ -1,0 +1,5 @@
+dashing:
+  image: aaronbbrown/electric_dashing
+  env_file: ./common.env
+  ports:
+  - "3030:3030"
