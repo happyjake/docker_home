@@ -14,7 +14,7 @@ To install
 ```sh
 git clone git@github.com:aaronbbrown/docker_home.git
 cd docker_home
-git submodule --init
+git submodule update --init
 cp common.env.sample common.env
 ```
 
