@@ -4,7 +4,7 @@
 set -e
 
 DOCKER_MACHINE_NAME=default
-PORTS="3030 8080"
+PORTS="3030 8081"
 
 # this only matters on OSX
 [[ $(uname -s ) = "Darwin" ]] || exit 0
