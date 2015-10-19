@@ -11,4 +11,4 @@ sickbeard:
     service: sickbeard
   volumes:
   - ./data/sickbeard_config:/config
-  - ./data/sickbeard_data:/data
+  - /Users/aaron/Downloads/complete/TV:/data
