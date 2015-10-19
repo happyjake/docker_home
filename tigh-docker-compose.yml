@@ -5,3 +5,9 @@ dashing:
     file: electric_dashing/docker-compose.yml
     service: dashing
   log_driver: "json-file"
+sickbeard:
+  build: docker-sickbeard/
+  volumes:
+  - ./data/sickbeard_config:/config
+  - ./data/sickbeard_data:/data
+  expose: "8081:8081"
