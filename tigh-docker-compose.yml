@@ -4,3 +4,4 @@ dashing:
   extends:
     file: electric_dashing/docker-compose.yml
     service: dashing
+  log_driver: "json-file"
