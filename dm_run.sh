@@ -25,3 +25,10 @@ for PORT in $PORTS; do
     VBoxManage controlvm default natpf1 "tcp-port$PORT,tcp,,$PORT,,$PORT"
   fi
 done
+
+if ! VBoxManage showvminfo $DOCKER_MACHINE_NAME --machinereadable | grep SharedFolderName | grep -q '="Volumes"$'; then
+  echo "Adding /Volumes shared folder"
+  VBoxManage sharedfolder add $DOCKER_MACHINE_NAME --name Volumes --hostpath /Volumes --automount
+fi
+docker-machine ssh $DOCKER_MACHINE_NAME 'sudo ntpclient -s -h pool.ntp.org'
+docker-machine ssh $DOCKER_MACHINE_NAME 'sudo mkdir -p /Volumes ; sudo  mount -t vboxsf Volumes /Volumes'
