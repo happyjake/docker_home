@@ -32,3 +32,8 @@ if ! VBoxManage showvminfo $DOCKER_MACHINE_NAME --machinereadable | grep SharedF
 fi
 docker-machine ssh $DOCKER_MACHINE_NAME 'sudo ntpclient -s -h pool.ntp.org'
 docker-machine ssh $DOCKER_MACHINE_NAME 'sudo mkdir -p /Volumes ; sudo  mount -t vboxsf Volumes /Volumes'
+
+VBoxManage guestproperty set $DOCKER_MACHINE_NAME "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore" 1
+VBoxManage guestproperty set $DOCKER_MACHINE_NAME "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold" 1000
+VBoxManage guestproperty set $DOCKER_MACHINE_NAME "/VirtualBox/GuestAdd/VBoxService/--timesync-interval" 10000
+VBoxManage guestproperty set $DOCKER_MACHINE_NAME "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust" 100
