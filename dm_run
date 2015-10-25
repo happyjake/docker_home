@@ -1,0 +1,103 @@
+#!/usr/bin/env ruby
+
+DOCKER_MACHINE_NAME = 'default'
+PORTS = [ 3030, 8080 ]
+GP_SET_PREFIX = "VBoxManage guestproperty set \"#{DOCKER_MACHINE_NAME}\""
+GP_GET_PREFIX = "VBoxManage guestproperty get \"#{DOCKER_MACHINE_NAME}\""
+
+class DockerMachine
+  def initialize(machine_name)
+    @machine_name = machine_name
+  end
+
+  def running?; `docker-machine status "#{@machine_name}"`.strip == "Running"; end
+  def stop;     `docker-machine stop "#{@machine_name}"`; end
+  def start; `docker-machine start "#{@machine_name}"`; end
+end
+
+# run a command only if a block returns false
+class ConditionalExec
+  def initialize(condition:, command:, description: nil)
+    @condition = condition
+    @command = command
+    @description = description
+  end
+
+  # must execute command if
+  def execute?
+    puts "Checking task #{@description}." if @description
+    result = !@condition.call
+    puts "Change #{result ? 'required' : 'not required'}."
+    result
+  end
+
+  def evaluate
+    if execute?
+      puts "Making change..."
+      @command.call
+    end
+  end
+end
+
+def modify_vm(conditional_execs)
+  conditional_execs.each do |cd|
+    ie.evaluate
+  end
+end
+
+exit 0 unless `uname -s`.strip == 'Darwin'
+puts 'OSX detected, proceeding with docker-machine'
+
+dm = DockerMachine.new(DOCKER_MACHINE_NAME)
+change_required = false
+
+changes = PORTS.map do |port|
+  { condition: ->{ `VBoxManage showvminfo "#{DOCKER_MACHINE_NAME}" --machinereadable`.match("tcp-port#{port}") },
+    command: ->{ `VBoxManage modifyvm default --natpf1 "tcp-port#{port},tcp,,#{port},,#{port}"` },
+    description: "TCP port #{port} forwarded to host" }
+end
+
+
+changes += [
+  { condition: ->{ `VBoxManage showvminfo "#{DOCKER_MACHINE_NAME}" --machinereadable` =~ %r{^SharedFolderPathMachineMapping\d+\=\"\/Volumes\"$} },
+    command: ->{ `VBoxManage sharedfolder add "#{DOCKER_MACHINE_NAME}" --name Volumes --hostpath /Volumes --automount` },
+    description: "/Volumes shared folder added" },
+  { condition: ->{ `#{GP_GET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore"`.split.last == "1" },
+    command: ->{ `#{GP_SET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-set-on-restore" 1` },
+    description: "timesync-set-on-restore" },
+  { condition: ->{ `#{GP_GET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold"`.split.last == "1000" },
+    command: ->{ `#{GP_SET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold" 1000` },
+    description: "timesync-set-threshold" },
+  { condition: ->{ `#{GP_GET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-interval"`.split.last == "10000" },
+    command: ->{ `#{GP_SET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-interval" 10000` },
+    description: "timesync-interval" },
+  { condition: ->{ `#{GP_GET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust"`.split.last == "100" },
+    command: ->{ `#{GP_SET_PREFIX} "/VirtualBox/GuestAdd/VBoxService/--timesync-min-adjust" 100` },
+    description: "timesync-interval" }
+]
+
+conditional_execs = changes.map { |change| ConditionalExec.new(change) }
+conditional_execs.each do |cd|
+  if cd.execute?
+    change_required = true
+    break
+  end
+end
+
+if change_required
+  if dm.running?
+    puts "Stopping VM to make changes"
+    dm.stop
+  end
+  modify_vm(conditional_execs)
+end
+
+unless dm.running?
+  puts "Starting VM"
+  dm.start
+end
+
+puts 'Forcing NTP set'
+`docker-machine ssh #{DOCKER_MACHINE_NAME} 'sudo ntpclient -s -h pool.ntp.org'`
+puts 'Mounting /Volumes'
+`docker-machine ssh "#{DOCKER_MACHINE_NAME}" 'sudo mkdir -p /Volumes ; sudo  mount -t vboxsf Volumes /Volumes'`
