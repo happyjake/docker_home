@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 DOCKER_MACHINE_NAME = 'default'
-PORTS = [ 3030, 8080 ]
+PORTS = [ 3030, 8080, 8000 ]
 GP_SET_PREFIX = "VBoxManage guestproperty set \"#{DOCKER_MACHINE_NAME}\""
 GP_GET_PREFIX = "VBoxManage guestproperty get \"#{DOCKER_MACHINE_NAME}\""
 
@@ -41,7 +41,7 @@ end
 
 def modify_vm(conditional_execs)
   conditional_execs.each do |cd|
-    ie.evaluate
+    cd.evaluate
   end
 end
 
