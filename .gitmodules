@@ -1,3 +1,6 @@
 [submodule "electric_dashing"]
 	path = electric_dashing
 	url = git@github.com:aaronbbrown/electric_dashing.git
+[submodule "homedash"]
+	path = homedash
+	url = git@github.com:aaronbbrown/homedash.git
