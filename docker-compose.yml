@@ -8,6 +8,7 @@ postgresql:
     - /usr/local/var/postgres:/var/lib/postgresql
 
 dashing:
+  restart: always
   env_file: ./common.env
   build: electric_dashing/
   extends:
@@ -15,12 +16,22 @@ dashing:
     service: dashing
   log_driver: "json-file"
   links:
-  - postgresql:postgres
+    - postgresql:postgres
 
 homedash:
+  restart: always
   build: homedash/
   env_file: ./common.env
   links:
-  - postgresql:postgres
+    - postgresql:postgres
   ports:
-  - 3031:3030
+    - 3031:3030
+
+sabnzbd:
+  image: timhaak/sabnzbd
+  ports: 
+    - 7777:8080
+  volumes:
+   - /usr/local/var/sabnzbd_config:/config
+   - /mnt/media:/data
+  restart: always
