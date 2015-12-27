@@ -17,3 +17,10 @@ dashing:
   links:
   - postgresql:postgres
 
+homedash:
+  build: homedash/
+  env_file: ./common.env
+  links:
+  - postgresql:postgres
+  ports:
+  - 3031:3030
