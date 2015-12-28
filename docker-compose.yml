@@ -35,3 +35,40 @@ sabnzbd:
    - /usr/local/var/sabnzbd_config:/config
    - /mnt/media:/data
   restart: always
+
+sonarr:
+  build: sonarr/
+  restart: always
+  env_file: ./common.env
+  ports:
+    - 8989:8989
+  volumes:
+    - /mnt/media:/volumes/completed
+    - /usr/local/var/sonarr_config:/config
+    - /usr/local/var/sonarr_downloads:/downloads
+    - /mnt/media/TV:/tv
+    - /dev/rtc:/dev/rtc:ro
+  links:
+    - sabnzbd:sabnzbd
+
+plex:
+  image: linuxserver/plex
+  restart: always
+  env_file: ./common.env
+  ports:
+    - 32400:32400
+  volumes:
+    - /mnt/media:/data
+    - /usr/local/var/plex/config:/config
+  net: host
+
+plexpy:
+  image: linuxserver/plexpy
+  restart: always
+  env_file: ./common.env
+  ports:
+    - 8181:8181
+  volumes:
+    - /usr/local/var/plex/config/Library/Application Support/Plex Media Server/Logs/:/logs:ro
+    - /usr/local/var/plexpy/config:/config
+    - /etc/localtime:/etc/localtime:ro
