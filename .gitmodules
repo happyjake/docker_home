@@ -4,3 +4,6 @@
 [submodule "homedash"]
 	path = homedash
 	url = git@github.com:aaronbbrown/homedash.git
+[submodule "serviio"]
+	path = serviio
+	url = git@github.com:aaronbbrown/docker-serviio.git
