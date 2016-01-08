@@ -97,7 +97,7 @@ plexpy:
 
 # ------------------------
 smokeping:
-  image: linuxserver/smokeping
+  build: smokeping/
   restart: always
   env_file: ./common.env
   ports:

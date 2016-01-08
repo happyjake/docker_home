@@ -1,0 +1,29 @@
+*** Probes ***
+
++ FPing
+
+binary = /usr/bin/fping
+
++ DNS
+binary = /usr/bin/dig
+lookup = google.com
+server = 192.168.1.8
+step = 180
+
++EchoPing
+
+binary = /usr/bin/echoping
+forks = 5
+offset = 50%
+step = 300
+udp = no
+
+
++TCPPing
+
+binary = /usr/local/bin/tcpping # mandatory
+forks = 5
+offset = 50%
+step = 300
+#tcptraceroute = -e "sudo /usr/bin/tcptraceroute"
+timeout = 15
