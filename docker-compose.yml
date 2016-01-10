@@ -44,16 +44,12 @@ homedash:
   env_file: ./common.env
   links:
     - postgresql:postgres
-  ports:
-    - 3031:3030
 
 # ------------------
 # usenet services
 # ------------------
 sabnzbd:
   image: timhaak/sabnzbd
-  ports: 
-    - 7777:8080
   volumes:
    - /usr/local/var/sabnzbd_config:/config
    - /mnt/media:/data
@@ -63,8 +59,6 @@ couchpotato:
   image: linuxserver/couchpotato
   restart: always
   env_file: ./common.env
-  ports:
-    - 5050:5050
   volumes:
     - /usr/local/var/couchpotato/config:/config
     - /usr/local/var/couchpotato/downloads:/downloads
@@ -78,8 +72,6 @@ sonarr:
   build: sonarr/
   restart: always
   env_file: ./common.env
-  ports:
-    - 8989:8989
   volumes:
     - /mnt/media:/volumes/completed
     - /usr/local/var/sonarr_config:/config
@@ -104,8 +96,6 @@ plexpy:
   image: linuxserver/plexpy
   restart: always
   env_file: ./common.env
-  ports:
-    - 8181:8181
   volumes:
     - /usr/local/var/plex/config/Library/Application Support/Plex Media Server/Logs/:/logs:ro
     - /usr/local/var/plexpy/config:/config
@@ -117,8 +107,6 @@ smokeping:
   build: smokeping/
   restart: always
   env_file: ./common.env
-  ports:
-    - 8080:80
   volumes:
     - /usr/local/var/smokeping:/data
     - /usr/local/etc/smokeping:/config
