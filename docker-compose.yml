@@ -13,6 +13,7 @@ nginx:
     - smokeping:smokeping
   volumes:
     - /usr/local/etc/nginx/ssl:/etc/nginx/ssl:ro
+    - /usr/local/var/nginx/log:/var/log/nginx
 
 # ----------------
 # Home Dashboard
