@@ -1,0 +1,10 @@
+unifi:
+  restart: always
+  image: rednut/unifi-controller
+  ports:
+    - 8080:8080
+    - 8443:8443
+    - 8880:8880
+    - 37117:27117
+  volumes:
+    - /opt/docker/unifi/data:/usr/lib/unifi/data
