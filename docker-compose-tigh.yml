@@ -8,3 +8,4 @@ unifi:
     - 37117:27117
   volumes:
     - /opt/docker/unifi/data:/usr/lib/unifi/data
+  net: host
