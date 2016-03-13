@@ -11,6 +11,7 @@ nginx:
     - sonarr:sonarr
     - plexpy:plexpy
     - smokeping:smokeping
+    - nzbget:nzbget
   volumes:
     - /usr/local/etc/nginx/ssl:/etc/nginx/ssl:ro
     - /usr/local/var/nginx/log:/var/log/nginx
@@ -67,6 +68,16 @@ couchpotato:
   links:
     - sabnzbd:sabnzbd
 
+nzbget:
+  image: linuxserver/nzbget
+  restart: always
+  env_file: ./common.env
+  volumes:
+    - /opt/docker/nzbget/config:/config
+    - /mnt/media2:/downloads
+    - /etc/localtime:/etc/localtime:ro
+  links:
+    - sabnzbd:sabnzbd
 
 sonarr:
   build: sonarr/
