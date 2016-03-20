@@ -17,10 +17,10 @@ end
 
 # run a command only if a block returns false
 class ConditionalExec
-  def initialize(condition:, command:, description: nil)
-    @condition = condition
-    @command = command
-    @description = description
+  def initialize(args)
+    @condition = args[:condition]
+    @command = args[:command]
+    @description = args[:description]
   end
 
   # must execute command if
@@ -100,4 +100,4 @@ end
 puts 'Forcing NTP set'
 `docker-machine ssh #{DOCKER_MACHINE_NAME} 'sudo ntpclient -s -h pool.ntp.org'`
 puts 'Mounting /Volumes'
-`docker-machine ssh "#{DOCKER_MACHINE_NAME}" 'sudo mkdir -p /Volumes ; sudo  mount -t vboxsf Volumes /Volumes'`
+`docker-machine ssh "#{DOCKER_MACHINE_NAME}" 'sudo mkdir -p /Volumes ; sudo  mount -t vboxsf  -o uid=1000,gid=50,,iocharset=utf8 Volumes /Volumes'`
